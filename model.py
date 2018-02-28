@@ -142,36 +142,16 @@ def rgb2hsv(x):
 	return hsv[:,:,:,1:2]
 
 
-def lenet():
-	model=Sequential()
-	model.add(Lambda(lambda x: x / 255.0, input_shape=(160,320,3)))
-	model.add(Lambda(rgb2hsv))
-	model.add(Cropping2D(cropping=((50,20),(0,0))))
-	model.add(Conv2D(6,5,5,subsample=(2,2), activation='relu'))
-	model.add(SpatialDropout2D(0.2))
-	model.add(Conv2D(16,5,5,subsample=(2,2),activation='relu'))
-	model.add(SpatialDropout2D(0.2))
-	model.add(Flatten())
-	model.add(Dense(120, activation='relu'))
-	model.add(Dense(84, activation='relu'))
-	model.add(Dense(1))
-	return model
-
 def nvidia_model():
 	model = Sequential()
 	model.add(Lambda(lambda x: x / 255.0, input_shape=(160,320,3)))
 	model.add(Lambda(rgb2hsv))
 	model.add(Cropping2D(cropping=((50,20),(0,0))))
 	model.add(Conv2D(24,5,5, subsample=(2,2), activation='relu'))
-	#model.add(SpatialDropout2D(0.2))
 	model.add(Conv2D(36,5,5, subsample=(2,2), activation='relu'))
-	#model.add(SpatialDropout2D(0.2))
 	model.add(Conv2D(48,5,5, subsample=(2,2), activation='relu'))
-	#model.add(SpatialDropout2D(0.2))
 	model.add(Conv2D(64,3,3, activation='relu'))
-	#model.add(SpatialDropout2D(0.2))
 	model.add(Conv2D(64,3,3, activation='relu'))
-	#model.add(SpatialDropout2D(0.2))
 	model.add(Flatten())
 	model.add(Dense(100))
 	model.add(Dense(50))
