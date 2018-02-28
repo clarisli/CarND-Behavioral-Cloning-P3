@@ -11,7 +11,7 @@ from keras.layers import Cropping2D, MaxPooling2D, Conv2D
 # Step 0: Load The Data
 
 samples = []
-with open('./data/driving_log.csv') as csvfile:
+with open('./data/driving_log_advanced.csv') as csvfile:
 	reader = csv.reader(csvfile)
 	next(reader,None)
 	for line in reader:
@@ -36,21 +36,18 @@ def balance_distribution(samples, num_bins=25):
 		bin_samples = [s for s in samples if float(s[3]) >= bin_edges[idx] and float(s[3]) < bin_edges[idx+1]]
 		bin_count = len(bin_samples)
 		if bin_count > 0:
-			if bin_count < avg_bin_count:
-				multiplier = int(avg_bin_count/bin_count)
-				remainder = int(avg_bin_count%bin_count)       
+			if bin_count <= avg_bin_count:
+				multiplier = avg_bin_count//bin_count
+				remainder = avg_bin_count%bin_count  
 				samples.extend(bin_samples*multiplier)
 				samples.extend(bin_samples[:remainder])
-			else:
-				unwanted = bin_samples[:int((bin_count-avg_bin_count)/3)]                
-				samples = [s for s in samples if s not in unwanted]
 	return samples
 train_samples = balance_distribution(train_samples)
 
 # Data Augmentation
 # mode: random, center, left, right
 def camera_data(sample, mode='center'):
-	correction = 0.2
+	correction = 0.26
 	center_image = sample_img(sample[0])
 	center_angle = float(sample[3])
 	left_image = sample_img(sample[1])
@@ -58,7 +55,7 @@ def camera_data(sample, mode='center'):
 	right_image = sample_img(sample[2])
 	right_angle = center_angle - correction
 	if mode == 'random':
-		if np.random.rand() > 0.9:
+		if np.random.rand() > 0.7:
 			if np.random.rand() > 0.5:
 				return left_image, left_angle
 			else:
@@ -98,10 +95,11 @@ def augment(image, angle):
 		image, angle = flip(image, angle)
 	if np.random.rand() > .5:
 		image = brightness(image)
-	if np.random.rand() > .8:
+	if np.random.rand() > .5:
 		image, angle = translate(image, angle)
 	return image, angle
 
+# Training Data Generator
 
 def generator(samples, batch_size=32, augment_data=False):
 	num_samples = len(samples)
@@ -117,7 +115,7 @@ def generator(samples, batch_size=32, augment_data=False):
 					image, angle = camera_data(batch_sample, mode='random')
 					image, angle = augment(image, angle)
 				else:
-					image, angle = camera_data(batch_sample, mode='center')
+					image, angle = camera_data(batch_sample)
 				images.append(image)
 				angles.append(angle)
 
@@ -141,7 +139,6 @@ def rgb2hsv(x):
 	hsv = tf.image.rgb_to_hsv(x)
 	return hsv[:,:,:,1:2]
 
-
 def nvidia_model():
 	model = Sequential()
 	model.add(Lambda(lambda x: x / 255.0, input_shape=(160,320,3)))
@@ -163,7 +160,7 @@ def nvidia_model():
 model = nvidia_model()
 model.summary()
 model.compile(optimizer='adam',loss='mse')
-history_object = model.fit_generator(train_generator, samples_per_epoch = len(train_samples), validation_data=validation_generator, nb_val_samples=len(validation_samples), nb_epoch=3)
+history_object = model.fit_generator(train_generator, samples_per_epoch = len(train_samples), validation_data=validation_generator, nb_val_samples=len(validation_samples), nb_epoch=6)
 model.save('model.h5')
 
 
