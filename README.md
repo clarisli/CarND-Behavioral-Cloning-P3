@@ -90,11 +90,11 @@ Here are the images taken from center camera with its corresponding steering ang
 
 ![alt text][image3]
 
-My first step was to use the convolution neural network model from [NVIDIA](https://arxiv.org/pdf/1604.07316.pdf). I thought this model might be appropriate because it was known that it works well for self driving car.
+My first step was to use the convolution neural network model from [NVIDIA](https://arxiv.org/pdf/1604.07316.pdf) with samples from track 1. I thought this model might be appropriate because it was known that it works well for self driving car.
 
-In order to gauge how well the model was working, I split the sample data of from track 1 into a training and validation set. I found that my first model had a low mean squared errors on both the training and the validation set, but performs poorly on the simulator. The reason might be that I was only validating with images from center camera, and it assumed the car will always be at the center of the lane. This implied that the model was overfitting.
+In order to gauge how well the model was working, I split the sample data into a training and validation set. I found that my first model had a low mean squared errors on both the training and the validation set, but performs poorly on the simulator. I had a highly unbalanced dataset. The dataset have an excessive amount of small angles(i.e. straight), and the model trained from these will be highly biased towards driving straight. Track 1 has relatively more straight parts, and hence the lower errors. Another reason might be that I was only validating with images from center camera. It assumed the car will always be perfectly at the center of the lane, and this does not reflect the real situation on simulator.
 
-To combat the overfitting, I added more data from track 2 to the model.
+This implied that the model was overfitting. To combat the overfitting, I added more data from track 2 to the model.
 
 I ran the simulator to see how well the car was driving around track one. There were a few spots where the vehicle fell off the track, especially at the curving parts. To improve the driving behavior in these cases, I further augmented the data set using multiple cameras as decribed in following sections.
 
@@ -198,5 +198,6 @@ I also randomly translated the image and updated its steering angle accordingly.
 I trained the over 6 epochs, the car was able to autonomously drive around track 2 for a lap without leaving the lane. 
 
 #### 4. Future Work
+* Imporve the model to perform better on track 2.
 * Train with different model architecture such as [SqueezeNet](https://arxiv.org/pdf/1602.07360.pdf)
 
