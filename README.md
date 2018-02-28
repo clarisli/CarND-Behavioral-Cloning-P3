@@ -195,7 +195,7 @@ I also randomly translated the image and updated its steering angle accordingly.
 
 ![alt text][image8]
 
-I trained the over 6 epochs, the car was able to autonomously drive around track 2 for a lap without leaving the lane. 
+I trained over 6 epochs, the car was able to autonomously drive around track 2 for a lap without leaving the lane. 
 
 #### 4. Future Work
 * Imporve the model to perform better on track 2.
