@@ -90,8 +90,7 @@ Here are the images taken from center camera with its corresponding steering ang
 
 My first step was to use the convolution neural network model from [NVIDIA](https://arxiv.org/pdf/1604.07316.pdf). I thought this model might be appropriate because it was known that it works well for self driving car.
 
-In order to gauge how well the model was working, I split the sample data of from track 1 and steering angle data into a training and validation set. I found that my first model had a low mean squared errors on both the training and the validation set, but performs poorly on the simulator. The car ran stright off the slightly curved road, shortly after the starting point. The cause might be that I was only validating with images from center camera and assuming the car will be always at in the center of lane.
-This implied that the model was overfitting.
+In order to gauge how well the model was working, I split the sample data of from track 1 and steering angle data into a training and validation set. I found that my first model had a low mean squared errors on both the training and the validation set, but performs poorly on the simulator. The reason might be that I was only validating with images from center camera, and this assuming the car will always be at the center of the lane. This implied that the model was overfitting.
 
 To combat the overfitting, I added more data from track 2 to the model.
 
